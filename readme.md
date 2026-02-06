@@ -1,5 +1,15 @@
 # 📘 TP — Appels aux LLM & Augmentation de Prompts
 
+### Étape 1 — Télécharger le TP
+
+- Télécharger le ZIP du projet
+- Décompresser le dossier
+
+```bash
+git clone https://github.com/BambaSpoid/generative-ai-class.git
+cd generative-ai-class
+```
+
 ## Objectifs du TP
 
 À la fin de ce TP, l’étudiant sera capable de :
