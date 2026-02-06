@@ -1,0 +1,11 @@
+# Requêtes HTTP vers Ollama
+requests>=2.31.0
+
+# Notebooks Jupyter
+jupyter>=1.0.0
+ipykernel>=6.29.0
+
+# Gestion optionnelle des variables d’environnement
+python-dotenv>=1.0.1
+
+numpy>=1.24.0
