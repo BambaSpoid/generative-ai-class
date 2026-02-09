@@ -1,23 +1,41 @@
-# Python
+############################
+# Python / Environnements
+############################
 .venv/
-__pycache__/
-*.pyc
 venv/
 env/
+__pycache__/
 *.py[cod]
 *.pyo
 *.pyd
 
-# RAG artifacts / cache
-data/*.npy
-data/*.joblib
-data/*.csv
-data/*.txt
-logs/
-data/cache_*.json
-
+############################
 # Jupyter
+############################
 .ipynb_checkpoints/
 
-# OS
+############################
+# RAG – fichiers générés (NE PAS VERSIONNER)
+############################
+
+# Données générées (embeddings, index, cache)
+labs/**/data/*.npy
+labs/**/data/*.joblib
+labs/**/data/cache_*.json
+
+# Logs d’exécution
+labs/**/logs/
+
+############################
+# Données sources optionnelles
+# (décommente si trop lourdes)
+############################
+labs/**/data/*.csv
+labs/**/data/*.txt
+
+############################
+# OS / Éditeur
+############################
 .DS_Store
+.vscode/
+.idea/
