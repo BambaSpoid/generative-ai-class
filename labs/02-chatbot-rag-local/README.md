@@ -1,159 +1,133 @@
-# 🧠 Fashion Forward Hub — Chatbot RAG 100 % Local
+````markdown
+# 🎓 Generative AI — Labs 100% Offline avec Ollama
 
-Ce projet implémente un **chatbot RAG (Retrieval-Augmented Generation) entièrement local**, basé sur **Ollama**, avec **API Flask**, **UI web**, **RBAC**, **observabilité** et **évaluation simple**.
-Il est conçu pour un **TP de niveau Master**.
+Ce dépôt regroupe une série de **TP pratiques en IA Générative**, conçus pour fonctionner **entièrement hors ligne**, sans clé API ni services cloud.
 
 ---
 
-## ✅ Prérequis
+### 1️⃣ Télécharger le projet
 
-### 1️⃣ Système
+```bash
+git clone https://github.com/BambaSpoid/generative-ai-class.git
+cd generative-ai-class
+```
+````
 
-- macOS / Linux / Windows (WSL recommandé)
-- **Python ≥ 3.10**
+_(Alternative simple : bouton **Code → Download ZIP** sur GitHub)_
 
-### 2️⃣ Ollama (obligatoire)
+---
 
-Installer Ollama :
+### 2️⃣ Installer Ollama (une seule fois)
+
 👉 [https://ollama.com](https://ollama.com)
 
-Vérifier que le serveur est actif :
+Puis télécharger les modèles nécessaires :
 
 ```bash
-ollama list
-```
-
-### 3️⃣ Modèles Ollama requis
-
-```bash
-ollama pull nomic-embed-text
 ollama pull llama3:latest
-```
-
-_(optionnel – pour les tradeoffs)_
-
-```bash
-ollama pull gemma2:2b
-ollama pull gemma3:12b
+ollama pull nomic-embed-text
 ```
 
 ---
 
-## 📦 Installation
-
-### 1️⃣ Cloner le projet
-
-```bash
-git clone <repo-url>
-cd full-rag
-```
-
-### 2️⃣ Créer un environnement virtuel
+### 3️⃣ Créer l’environnement Python
 
 ```bash
 python -m venv .venv
-source .venv/bin/activate   # macOS / Linux
-# .venv\\Scripts\\activate  # Windows
+source .venv/bin/activate      # macOS / Linux
+.venv\Scripts\activate        # Windows
 ```
 
-### 3️⃣ Installer les dépendances
+---
+
+## 🧪 Contenu des Labs
+
+### 📘 Lab 01 — Appels aux LLM & Augmentation de Prompts
+
+📂 `labs/01-llm-calls-offline/`
+
+**Objectifs pédagogiques :**
+
+- Appeler un LLM depuis Python
+- Comprendre la différence entre :
+  - un prompt simple
+  - un prompt enrichi (augmentation de contexte)
+
+- Introduction concrète au principe des systèmes **RAG**
+
+▶️ Lancer le TP :
 
 ```bash
+cd labs/01-llm-calls-offline
 pip install -r requirements.txt
+jupyter notebook llm_call_ollama.ipynb
 ```
 
 ---
 
-## 📁 Données & cache
+### 🤖 Lab 02 — Chatbot RAG 100% Local
 
-Le projet utilise :
+📂 `labs/02-chatbot-rag-local/`
 
-- `data/clothes_json.joblib`
-- `data/faq.joblib`
+**Objectifs pédagogiques :**
 
-⚠️ **Important**
-Avant de lancer l’API, il faut **exécuter le notebook** pour :
+- Construire un chatbot RAG local
+- Comprendre :
+  - embeddings
+  - index de recherche
+  - pipeline RAG (indexing → retrieval → génération)
 
-- transformer les données en documents
-- calculer les embeddings
-- construire l’index vectoriel
-
-Cela génère automatiquement :
-
-```
-data/
-├── docs.jsonl
-├── embeddings.npy
-└── nn_index.joblib
-```
+- Architecture RAG **de bout en bout**, sans cloud
 
 ---
 
-## 🚀 Lancer l’application
+## 🔧 Étape importante — Construction de l’index RAG (obligatoire)
 
-### 1️⃣ Démarrer l’API Flask
+Avant d’utiliser le chatbot RAG ou les notebooks, il faut **construire l’index local**.
+
+Dans le dossier du Lab 02 :
 
 ```bash
-python app.py
+cd labs/02-chatbot-rag-local
+pip install -r requirements.txt
+python build_index.py
 ```
 
-Tu devrais voir :
+Ce script :
 
-```
-✅ Cache loaded: DOCS=XXXXX | EMB=(XXXXX, 768) | index=NearestNeighbors
-Running on http://127.0.0.1:5000
-```
+- charge les documents (`docs.jsonl`)
+- calcule les embeddings avec Ollama
+- construit l’index de recherche
+- sauvegarde les fichiers nécessaires localement
+
+👉 Cette étape est à faire **une seule fois**.
 
 ---
 
-## 🌐 Accéder aux endpoints
+## 🖥️ Pré-requis techniques
 
-### 🔹 API
+- Python **≥ 3.10**
+- Ollama (LLM local)
+- Machine standard (CPU suffisant, GPU optionnel)
 
-- **Accueil / doc rapide**
-  👉 [http://127.0.0.1:5000/](http://127.0.0.1:5000/)
+💡 Aucun accès Internet requis **pendant les TPs**
+💡 Aucun compte, aucune clé API
 
-- **Health check**
-  👉 [http://127.0.0.1:5000/health](http://127.0.0.1:5000/health)
+---
 
-- **Chatbot (POST)**
-  👉 [http://127.0.0.1:5000/ask](http://127.0.0.1:5000/ask)
+## 📂 Structure du dépôt
 
-Exemple :
-
-```bash
-curl -X POST http://127.0.0.1:5000/ask \
-  -H "Content-Type: application/json" \
-  -d '{"query":"Do you have a navy blue shirt for men?","user_role":"public"}'
+```
+generative-ai-class/
+├── labs/
+│   ├── 01-llm-calls-offline/
+│   └── 02-chatbot-rag-local/
+│       ├── build_index.py
+│       ├── app.py
+│       ├── utils.py
+│       └── data/
+└── README.md
 ```
 
----
-
-### 🔹 Interface Web (UI)
-
-👉 **[http://127.0.0.1:5000/ui](http://127.0.0.1:5000/ui)**
-
-Fonctionnalités :
-
-- poser une question
-- choisir le rôle (`public` / `staff`)
-- ajuster `k` et le modèle
-- voir la réponse, la latence et les documents récupérés
-
----
-
-## 🧪 Vérification rapide
-
-Dans l’UI :
-
-1. Pose une question avec `user_role=public`
-2. Repose la même avec `user_role=staff`
-3. Observe la différence → **RBAC actif**
-
----
-
-## 📝 Notes
-
-- Le projet fonctionne **100 % hors ligne** (aucune clé API).
-- Les réponses sont **strictement basées sur le contexte** (citations obligatoires).
-- Les logs sont stockés dans `logs/traces.jsonl`.
+> ⚠️ Les fichiers lourds (embeddings, index, cache) ne sont **pas versionnés**.
+> Ils sont recréés automatiquement via `build_index.py`.
