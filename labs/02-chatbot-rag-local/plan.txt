@@ -1,0 +1,86 @@
+Oui, ton ordre mélange **“NLP/agents (router + extraction paramètres + metadata)”** et **“RAG pipeline (docs→embeddings→retrieval→prompt→eval)”**.
+Pour que ce soit **pédagogique** et qu’on évite de se perdre, je te propose un ordre **en 3 blocs** (et on avance cellule par cellule comme tu veux).
+
+## Ordre recommandé (clair et progressif)
+
+### Bloc A — Comprendre l’intention & router (sans RAG)
+
+1. **Deciding if a query is FAQ or Product related**
+2. **Answering a FAQ question**
+3. **Decide the Nature of a Product-Related Question** *(ex: “recherche produit” vs “créatif/look” vs “comparaison”)*
+4. **Retrieving the Parameters for a Given Task** *(extraire: gender, colour, articleType, season, price…)*
+5. **Generate metadata** *(structure JSON standardisée)*
+
+### Bloc B — Filtrer produits par metadata (sans embeddings)
+
+6. **Filtering by metadata**
+7. **Retrieving Items Based on Metadata Inferred from a Query**
+8. **Generating the retrieved items as a context**
+9. **Query on Products** *(réponse via LLM avec contexte “filtré”)*
+10. **The Final Function / The function to rule them all** *(router + faq + product)*
+
+### Bloc C — RAG complet (embeddings + index + retrieval)
+
+11. **Transformer en documents (texte + metadata)**
+12. **Embeddings (Ollama) + Index vectoriel local**
+13. **Retrieval (+ RBAC filter)**
+14. **Prompt RAG strict + génération (Ollama chat)**
+15. **Observabilité : traces JSONL**
+16. **Évaluation simple (sans LLM-judge)**
+17. **Compromis qualité/latence**
+18. **Sécurité : démo RBAC**
+
+### Bloc D — App
+
+19. **Chatbot app : Flask**
+
+👉 Pourquoi cet ordre ?
+
+* On commence par des trucs **visibles et simples** (router, FAQ)
+* Puis on fait un “proto” **metadata filtering** (super pédagogique)
+* Ensuite seulement on introduit le “vrai RAG vectoriel” (plus lourd)
+
+---
+
+# Step 1 (Cellule 1) — Router FAQ vs Product (version pédagogique)
+
+On démarre par ça. Exécute et colle la sortie.
+
+```python
+import re
+
+FAQ_KEYWORDS = [
+    "livraison", "retour", "remboursement", "paiement", "commande", "annuler",
+    "échange", "guide des tailles", "taille", "expédition", "délais", "frais",
+    "service client", "compte", "mot de passe", "suivi", "adresse"
+]
+
+PRODUCT_KEYWORDS = [
+    "je cherche", "je veux", "propose", "montre", "chemise", "jean", "t-shirt", "tshirt",
+    "chaussure", "couleur", "taille", "hiver", "été", "casual", "formal",
+    "tenue", "look", "assortir", "outfit", "style"
+]
+
+def route_query(query: str) -> str:
+    q = query.lower()
+    faq_score = sum(1 for w in FAQ_KEYWORDS if w in q)
+    prod_score = sum(1 for w in PRODUCT_KEYWORDS if w in q)
+
+    # règle simple et transparente
+    if faq_score > prod_score:
+        return "FAQ"
+    else:
+        return "PRODUCT"
+
+tests = [
+    "Quels sont les délais de livraison ?",
+    "Comment faire un retour ?",
+    "Je cherche une chemise bleu marine pour homme",
+    "Propose un look pour une soirée"
+]
+
+for t in tests:
+    print(route_query(t), "->", t)
+```
+
+✅ Quand tu as la sortie, on enchaîne directement sur **Step 2 : Answering a FAQ question** (avec FAQ layout + prompt strict).

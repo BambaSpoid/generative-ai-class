@@ -1,13 +1,20 @@
 # Python
+.venv/
 __pycache__/
+*.pyc
+venv/
+env/
 *.py[cod]
 *.pyo
 *.pyd
 
-# Environnements virtuels
-.venv/
-venv/
-env/
+# RAG artifacts / cache
+data/*.npy
+data/*.joblib
+data/*.csv
+data/*.txt
+logs/
+data/cache_*.json
 
 # Jupyter
 .ipynb_checkpoints/
