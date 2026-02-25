@@ -23,7 +23,7 @@ news_researcher = Agent(
     verbose=True,
     memory=False,
     allow_delegation=False,
-    max_iter=2,
+    max_iter=3,
 )
 
 news_writer = Agent(
